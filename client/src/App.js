@@ -13,6 +13,8 @@ import TabTest from './TabTest'; //This is just for testing
 
 import Page1 from './Page1'; //This is just for testing
 
+import NotFound from './NotFound';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +36,8 @@ class App extends Component {
                 <Route exact path="/page/:id" component={Page} />
                 <Route exact path="/page1/:id" component={Page1} /> {/*This is just for testing*/}
                 <Route exact path="/tab" component={TabTest} /> {/*This is just for testing*/}
+
+                <Route exact path="*" component={NotFound} />
               </Switch>
           </Container>
           <Footer />

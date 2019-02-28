@@ -83,7 +83,7 @@ class Page extends Component {
     getSeasons() {
         let seasons = (this.state.hasSpecials) ? "season/0," : "";
         let seasonCount = (seasons === "") ? 0 : 1;
-
+        axios.get("/api/").then(response => console.log(response));
         if(this.state.data.number_of_seasons > 20) console.log("CAN ONLY GET 20 SEASONS AT A TIME.");
 
         for(var i = 1; i <= this.state.data.number_of_seasons; i++) {

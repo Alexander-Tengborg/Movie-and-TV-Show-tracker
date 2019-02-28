@@ -7,6 +7,7 @@
     "react-dom": "16.7"
   },
   "devDependencies": {
+    "http-proxy-middleware": "^0.19.1",
     "react-scripts": "1.0.7"
   },
   "scripts": {
@@ -14,5 +15,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }
