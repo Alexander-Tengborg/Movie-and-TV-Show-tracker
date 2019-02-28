@@ -13,6 +13,8 @@ import TabTest from './TabTest'; //This is just for testing
 
 import Page1 from './Page1'; //This is just for testing
 
+import Search1 from './Search1/Search';
+
 import NotFound from './NotFound';
 
 class App extends Component {
@@ -33,6 +35,8 @@ class App extends Component {
 
                 <Route exact path="/s/:category/:query/:page" component={Search} /> 
                 <Route exact path="/search/:category/:query/:page" component={Search} /> 
+                <Route exact path="/s1/:category/:query/:page" component={Search1} /> 
+                <Route exact path="/search1/:category/:query/:page" component={Search1} /> 
                 <Route exact path="/page/:id" component={Page} />
                 <Route exact path="/page1/:id" component={Page1} /> {/*This is just for testing*/}
                 <Route exact path="/tab" component={TabTest} /> {/*This is just for testing*/}

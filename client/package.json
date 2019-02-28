@@ -3,12 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
+    "lodash": "^4.17.11",
     "react": "16.7",
-    "react-dom": "16.7"
+    "react-dom": "16.7",
+    "react-redux": "^6.0.1",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
+    "semantic-ui-react": "^0.85.0"
   },
   "devDependencies": {
     "http-proxy-middleware": "^0.19.1",
-    "react-scripts": "1.0.7"
+    "react-scripts": "1.0.7",
+    "redux-devtools-extension": "^2.13.8"
   },
   "scripts": {
     "start": "react-scripts start",
