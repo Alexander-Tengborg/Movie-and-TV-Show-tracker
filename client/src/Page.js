@@ -58,6 +58,8 @@ class Page extends Component {
                         genres: response.data.genres,
                         created_by: response.data.created_by,
                         number_of_seasons: response.data.number_of_seasons,
+                        first_air_date: response.data.first_air_date,
+                        last_air_date: response.data.last_air_date,
                         id: response.data.id,
                         hasSpecials: response.data.seasons[0] === 0 ? true : false
                     },
