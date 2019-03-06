@@ -182,8 +182,9 @@ class Page extends Component {
     toggleSeason(e, seasonNum) { // fix binding to checkbox
         e.stopPropagation();
         e.preventDefault(); //not needed?
-        if(e.type !== 'click') return;
-        // console.log(e.type);
+        console.log(e.type)
+        if(e.type !== 'click' && e.type !== 'mouseup') return;
+        console.log(e.type);
         let data = this.state.watched[seasonNum];
         let status = true;
         //fix a better solution for this: (running the same loop twice);

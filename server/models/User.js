@@ -21,39 +21,12 @@ var userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    shows: [{ type: mongoose.Schema.Types.Object, ref: 'showSchema' }]
+    shows: [{ type: mongoose.Schema.Types.Object, ref: 'Show' }]
 });
 
-var showSchema = new mongoose.Schema({
-    showId: Number,
-    showName: String,
-    seasons: [{ type: mongoose.Schema.Types.Object, ref: 'seasonSchema' }]
-})
+var User = new mongoose.model('User', userSchema);
 
-var seasonSchema = new mongoose.Schema({
-    seasonId: Number,
-    seasonName: String,
-    episodes: [{ type: mongoose.Schema.Types.Object, ref: 'episodeSchema' }]
-});
-
-var episodeSchema = new mongoose.Schema({
-    episodeId: Number,
-    episodeName: String,
-    watched: Boolean
-})
-
-//Plural instead?
-var User = new mongoose.model('user', userSchema);
-var Show = new mongoose.model('show', showSchema);
-var Season = new mongoose.model('season', seasonSchema);
-var Episode = new mongoose.model('episode', episodeSchema);
-
-module.exports = {
-    User,
-    Show,
-    Season,
-    Episode
-}
+module.exports = User;
 
 // var episodes1 = [
 //     new Episode({

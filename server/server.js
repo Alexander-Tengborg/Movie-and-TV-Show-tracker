@@ -18,18 +18,23 @@ mongoose.connect(config.DB, { useNewUrlParser: true }).then(
 
 mongoose.set('useCreateIndex', true); //The unique property does not work, so i either have to check them myself or use the library mongoose-unique-validator
 
-
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(bodyParser.json()) //json
 app.use(express.static(path.join(__dirname, 'build'))); // build directory
+app.use(passport.initialize());
+require('./passport')(passport); //fix name
 
-app.get('/api/*', (req, res) => { //fix so it works for /api aswell.
+app.get('/api/', (req, res) => { //fix so it works for /api aswell.
     res.send('Home Page');
 })
 
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'))
-})
+const authRoute = require('./routes/User');
+
+app.use('/api/auth', authRoute);
+
+// app.get('/*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'))
+// })
 
 const PORT = process.env.PORT || 5000;
 
