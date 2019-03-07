@@ -86,9 +86,9 @@ class Header extends Component {
                 <Menu.Item as="a" name="login">
                   Login
                 </Menu.Item>
-                <Menu.Item as="a" name="register">
+                {/* <Menu.Item as="a" name="register">
                   Register
-                </Menu.Item>
+                </Menu.Item> */}
               </Menu.Menu>
             </Container>
           </Menu>

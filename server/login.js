@@ -1,6 +1,10 @@
 const Validator = require('Validator');
 const isEmpty = require('./util/isEmpty');
 
+//role authentication:
+
+// http://jasonwatmore.com/post/2018/11/28/nodejs-role-based-authorization-tutorial-with-example-api
+
 validateLoginInput = (data) => {
     let errors = {};
     data.username = !isEmpty(data.username) ? data.username : '';
