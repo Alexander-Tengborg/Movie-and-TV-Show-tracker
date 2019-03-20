@@ -83,8 +83,8 @@ class Header extends Component {
                     placeholder="Search here..." 
                   />
                 </Menu.Item>
-                <Menu.Item as="a" name="login">
-                  Login
+                <Menu.Item name="login">
+                  <Link to="/login">Login</Link>
                 </Menu.Item>
                 {/* <Menu.Item as="a" name="register">
                   Register

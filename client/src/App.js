@@ -17,6 +17,8 @@ import Search1 from './Search1/Search';
 
 import NotFound from './NotFound';
 
+import Login from './Login/Login';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +29,7 @@ class App extends Component {
       <BrowserRouter>
         <Fragment>
           <Header/>
-          <Container fluid={true}>
+          <Container>
               <Switch>
                 <Route exact path="/" component={Home} />
 
@@ -40,6 +42,9 @@ class App extends Component {
                 <Route exact path="/page/:id" component={Page} />
                 <Route exact path="/page1/:id" component={Page1} /> {/*This is just for testing*/}
                 <Route exact path="/tab" component={TabTest} /> {/*This is just for testing*/}
+
+                {/* <Route exact path="/register" /> Don't know if I'll use this. */}
+                <Route exact path="/login" component={Login} />
 
                 <Route exact path="*" component={NotFound} />
               </Switch>
