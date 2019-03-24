@@ -4,20 +4,34 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import './App.css';
 
 import Header from './Header/Header';
-import Page from './Page';
+import Page from './Page/Page';
 import Home from './Home/Home';
 import Search from './Search/Search';
 import Footer from './Footer/Footer';
 
-import TabTest from './TabTest'; //This is just for testing
-
-import Page1 from './Page1'; //This is just for testing
-
-import Search1 from './Search1/Search';
-
 import NotFound from './NotFound';
 
+import SecureRoute from './SecureRoute';
+
 import Login from './Login/Login';
+import setAuthToken from './setAuthToken';
+import { setCurrentUser, logoutUser } from './actions/authentication';
+import jwt_decode from 'jwt-decode';
+import store from './store';
+
+import { connect } from 'react-redux';
+
+if(localStorage.jwtToken) {
+  setAuthToken(localStorage.jwtToken);
+  const decoded = jwt_decode(localStorage.jwtToken);
+  store.dispatch(setCurrentUser(decoded));
+
+  const currentTime = Date.now() / 1000;
+  if(decoded.exp < currentTime) {
+    store.dispatch(logoutUser());
+    window.location.href = '/login';
+  }
+}
 
 class App extends Component {
   constructor(props) {
@@ -29,24 +43,21 @@ class App extends Component {
       <BrowserRouter>
         <Fragment>
           <Header/>
-          <Container>
+          <Container fluid={true}>
               <Switch>
-                <Route exact path="/" component={Home} />
+                <SecureRoute exact path="/" component={Home} />
 
 {/* The current routing goes /s/category/query/page. Example: /s/tv/sherlock/1 Not sure if i want to use this. might use something such as /search?c=tv&q=sherlock&page=1, or  /search/tv/?q=sherlock&page=1, or /tv/search/?q=sherlock&page=1*/}
 
-                <Route exact path="/s/:category/:query/:page" component={Search} /> 
-                <Route exact path="/search/:category/:query/:page" component={Search} /> 
-                <Route exact path="/s1/:category/:query/:page" component={Search1} /> 
-                <Route exact path="/search1/:category/:query/:page" component={Search1} /> 
-                <Route exact path="/page/:id" component={Page} />
-                <Route exact path="/page1/:id" component={Page1} /> {/*This is just for testing*/}
-                <Route exact path="/tab" component={TabTest} /> {/*This is just for testing*/}
+                {/* <SecureRoute exact path="/s/:category/:query/:page" component={Search} />  */}
+                {/* <SecureRoute exact path="/search/:category/:query/:page" component={Search} />  */}
+                <SecureRoute exact path="/:category/search" component={Search} /> 
+                <SecureRoute exact path="/:category/:id" component={Page} />
 
                 {/* <Route exact path="/register" /> Don't know if I'll use this. */}
                 <Route exact path="/login" component={Login} />
 
-                <Route exact path="*" component={NotFound} />
+                <SecureRoute exact path="*" component={NotFound} />
               </Switch>
           </Container>
           <Footer />
@@ -56,4 +67,10 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth
+  }
+}
+
+export default connect(mapStateToProps)(App);

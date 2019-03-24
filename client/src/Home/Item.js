@@ -25,18 +25,15 @@ class Item extends Component {
             description += "...";
         }
         return (
-            <Card color='red' style={{minWidth: 300, maxWidth: 300}}>
-                <Image src={imgSrc} style={{height: 400}} />
+            <Card color='red' style={{minWidth: 100, maxWidth: 300}}>
+                <Image src={imgSrc} style={{height: 220}} />
                 <Card.Content>
                     <Card.Header>
-                        <Link to={'/page/' + this.props.data.id}>{title}</Link>
+                        <Link to={`/${this.props.category}/${this.props.data.id}`}>{title}</Link>
                     </Card.Header>
                     <Card.Meta>
                         {release}
                     </Card.Meta>
-                    <Card.Description>
-                        {description}
-                    </Card.Description>
                 </Card.Content>
                 {/*}<Card.Content extra>
                 </Card.Content>{*/}

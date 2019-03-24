@@ -6,17 +6,14 @@ import 'semantic-ui-css/semantic.min.css';
 //import 'semantic-ui-css/semantic.darkly.min.css';
 
 import { Provider } from 'react-redux';
-import { createStore, compose } from 'redux';
 
-import { composeWithDevTools } from 'redux-devtools-extension';
+import store from './store';
 
-import reducers from './reducers';
+
 import App from './App';
 
 
 //USE PROPTYPES!
-
-const store = createStore(reducers, composeWithDevTools());
 
 
 ReactDOM.render(

@@ -3,10 +3,21 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const path = require('path');
+const helmet = require('helmet');
+
 const config = require('./db');
+require('./passport')(passport); //fix name
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: false })); 
+app.use(bodyParser.json()) //json
+app.use(helmet());
+app.use(express.static(path.join(__dirname, 'build'))); // build directory
+app.use(passport.initialize());
+
+//HTML CHARS?
+//SQL INJECTION
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
     () => {
         console.log('Connected to the database.');
@@ -18,19 +29,13 @@ mongoose.connect(config.DB, { useNewUrlParser: true }).then(
 
 mongoose.set('useCreateIndex', true); //The unique property does not work, so i either have to check them myself or use the library mongoose-unique-validator
 
-app.use(bodyParser.urlencoded({ extended: false })); 
-app.use(bodyParser.json()) //json
-app.use(express.static(path.join(__dirname, 'build'))); // build directory
-app.use(passport.initialize());
-require('./passport')(passport); //fix name
+const apiRoute = require('./routes/api');
 
-app.get('/api/', (req, res) => { //fix so it works for /api aswell.
-    res.send('Home Page');
-})
+app.use('/api/', apiRoute);
 
-const authRoute = require('./routes/User');
-
-app.use('/api/auth', authRoute);
+// app.get('/api/', (req, res) => { //fix so it works for /api aswell.
+//     res.send('Home Page');
+// })
 
 // app.get('/*', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'build', 'index.html'))

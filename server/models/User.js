@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-//move all schemas to individual files!
-
 var userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -20,6 +18,10 @@ var userSchema = new mongoose.Schema({
     created: {
         type: Date,
         default: Date.now
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
     },
     shows: [{ type: mongoose.Schema.Types.Object, ref: 'Show' }]
 });

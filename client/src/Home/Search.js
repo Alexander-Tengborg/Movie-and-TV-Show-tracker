@@ -4,21 +4,21 @@ import _ from 'lodash';
 
 import axios from 'axios';
 
-import * as actions from '../actions';
-
 import './Search.css';
 import { Loader, Grid, Pagination } from 'semantic-ui-react';
 import List from './List';
 
-import { connect } from 'react-redux';
+import { search, searchTv, searchMovie } from '../api/api';
+
+//USE ENUMS FOR MOVIE/TV?
 
 class Search extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            data: [], //move to redux
-            curPage: 1,
+            data: {}, //move to redux
+            curPage: this.getParam(this.props, 'p'),
             totalPages: 0,
             isSearching: true
         }
@@ -27,8 +27,10 @@ class Search extends Component {
         this.searchTmdb = this.searchTmdb.bind(this);
         this.searchTmdbPage = this.searchTmdbPage.bind(this);
         this.onPageChange = this.onPageChange.bind(this);
+    }
 
-        this.onScroll = this.onScroll.bind(this);
+    getParam(props, param) {
+      return new URLSearchParams(props.location.search).get(param);
     }
   //Use the following link while getting tv show/movie details, so i also can show the actors (and possibly writers)
   //https://api.themoviedb.org/3/tv/19885?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits
@@ -51,27 +53,6 @@ class Search extends Component {
 
     componentDidMount() {
         this.searchTmdb()
-        window.addEventListener('scroll', this.onScroll);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.onScroll);
-    }
-
-    onScroll(e) {
-        const element = e.target.documentElement;
-
-        if(element.scrollHeight - element.scrollTop === window.innerHeight && !this.state.isSearching) {
-            // console.log("current page: " + this.state.isSearching);
-            this.setState({
-                curPage: this.state.curPage + 1,
-                isSearching: true
-              }, () => {
-                // if(_.isEmpty(this.state.data[this.state.curPage])) {
-                  this.searchTmdbPage();
-                // }
-              });
-        }
     }
 
     componentDidUpdate(prevProps) {
@@ -79,7 +60,7 @@ class Search extends Component {
             // this.searchTmdb();
         }
 
-        if(prevProps.match.params.query !== this.props.match.params.query || prevProps.match.params.category !== this.props.match.params.category) {
+        if(this.getParam(prevProps, 'q') !== this.getParam(this.props, 'q') || prevProps.match.params.category !== this.props.match.params.category) {
             this.searchTmdb();
         }
     }
@@ -87,27 +68,23 @@ class Search extends Component {
     //If no results are found.. show something?
   searchTmdb() {
     //Reset the page when a new show is searched
-    let url = "https://api.themoviedb.org/3/search/" + this.props.match.params.category;
-    let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&query=" + this.props.match.params.query + "&page=" + this.state.curPage;
-    console.log("Request...");
+    // let url = "https://api.themoviedb.org/3/search/" + this.props.match.params.category;
+    // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&query=" + this.getParam(this.props, 'q') + "&page=" + this.state.curPage;
+    console.log("Searching for: " + this.getParam(this.props, 'q'));
     this.setState({
-      data: [],
+      data: {},
       isSearching: true
     })
 
-    axios.get(query)
+    search(this.props.match.params.category, this.getParam(this.props, 'q'), this.state.curPage)
       .then(response => {
         //this.props.finishedSearch();
-        let newData = [];
-        newData[this.state.curPage-1] = response.data.results.filter((item) => item.poster_path !== null) //Get rid off this, since a lot of items does not have posters. Create a placeholder one, like I did with credit images.
+        let newData = {...this.state.data};
+        newData[this.state.curPage] = response.data.results; //response.data.results.filter((item) => item.poster_path !== null) //Get rid off this, since a lot of items does not have posters. Create a placeholder one, like I did with credit images.
         this.setState({
             data: newData,
             totalPages: response.data.total_pages,
-
-        }, () => {
-            this.setState({
-                isSearching: false
-            })
+            isSearching: false
         })
       }
     );
@@ -117,22 +94,19 @@ class Search extends Component {
   //Also, if page > 1 is selected, and the page is refreshed, the <Pagination> elements will still say that the page is 1
   searchTmdbPage() {
        //Reset the page when a new show is searched
-       let url = "https://api.themoviedb.org/3/search/" + this.props.match.params.category;
-       let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&query=" + this.props.match.params.query + "&page=" + this.state.curPage + "&include_adult=true";
+      //  let url = "https://api.themoviedb.org/3/search/" + this.props.match.params.category;
+      //  let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&query=" + this.getParam(this.props, 'q') + "&page=" + this.state.curPage;
        console.log("Request...");
        this.setState({
          isSearching: true
        })
-       axios.get(query)
+       search(this.props.match.params.category, this.getParam(this.props, 'q'), this.state.curPage)
          .then(response => {
         // this.props.finishedSearch();
-           let newData = [];
-           newData = response.data.results.filter((item) => item.poster_path !== null)  //Get rid off this, since a lot of items does not have posters. Create a placeholder one, like I did with credit images.
+           let newData = {...this.state.data};
+           newData[this.state.curPage] = response.data.results; //response.data.results.filter((item) => item.poster_path !== null)  //Get rid off this, since a lot of items does not have posters. Create a placeholder one, like I did with credit images.
             this.setState({
-            data: [
-                ...this.state.data,
-                newData
-            ],
+            data: newData,
             isSearching: false
          })});
   }
@@ -146,13 +120,14 @@ class Search extends Component {
           }
           console.log(activePage);
         });
-        this.props.history.push(`/search/${this.props.match.params.category}/${this.props.match.params.query}/${activePage}`);
+        this.props.history.push(`/${this.props.match.params.category}/search?q=${this.getParam(this.props, 'q')}&p=${activePage}`);
       }
     
       //fix a movie and tv component. this.props.match.params.category decides which one should be rendered.
     render() {
         const isDisabled = (this.state.totalPages > 0) ? false : true; 
 
+        //The pagination is too large/wide for smaller phones
         const pagination =  <Grid centered  style={{margin: 15}}>
                               <Pagination activePage={this.state.curPage}
                                 disabled={isDisabled}
@@ -166,25 +141,11 @@ class Search extends Component {
         return (
             <div>
                 {this.state.isSearching && loader}
-
-                <List category={this.props.match.params.category} data={this.state.data} />
-
+                {!_.isEmpty(this.state.data) && pagination}
+                <List category={this.props.match.params.category} data={this.state.data[this.state.curPage]} />
+                {!_.isEmpty(this.state.data) && pagination}
             </div>
         );
-    }
-}
-
-const mapStateToProps = (state) => {
-    return {
-        input: state.input.query,
-        isSearching: state.input.isSearching
-    }
-}
-
-const mapDispatchToProps = (dispatch, state) => {
-    return {
-        startSearch: () => dispatch(actions.startSearch()),
-        finishedSearch: () => dispatch(actions.finishedSearch())
     }
 }
 

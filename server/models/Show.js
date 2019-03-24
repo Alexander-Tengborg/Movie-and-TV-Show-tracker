@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 
 var showSchema = new mongoose.Schema({
-    showId: Number,
-    showName: String,
+    showId: {
+        type: Number,
+        required: true,
+        unique: true
+    },
+    showName: {
+        type: String,
+        required: true,
+    },
     seasons: [{ type: mongoose.Schema.Types.Object, ref: 'Season' }]
 });
 

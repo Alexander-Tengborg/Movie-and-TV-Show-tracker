@@ -29,7 +29,7 @@ class Item extends Component {
                 <Image src={imgSrc} style={{height: 400}} />
                 <Card.Content>
                     <Card.Header>
-                        <Link to={'/page/' + this.props.data.id}>{title}</Link>
+                        <Link to={`/${this.props.category}/${this.props.data.id}`}>{title}</Link>
                     </Card.Header>
                     <Card.Meta>
                         {release}

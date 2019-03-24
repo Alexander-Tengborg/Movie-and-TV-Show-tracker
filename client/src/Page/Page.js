@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 
 import axios from 'axios';
-import { Container, Image, Loader, Item, Label, Card, Accordion, Icon, Checkbox } from 'semantic-ui-react';
+import { Container, Image, Loader, Item, Label, Card, Accordion, Icon, Checkbox, Tab, Menu } from 'semantic-ui-react';
 
 import _ from 'lodash';
 
 import Avatar from './avatar.png';
 
-import * as api from './api/api';
+import { getById, getSeasons } from '../api/api';
+
+// import * as api from './api/api';
+
+import './Page.css'
+
+//plex api???
 
 //Fix the 'add/remove to/from watchlist' button/icon.
 //use tabs instead of accordions for seasons.
@@ -19,10 +25,11 @@ class Page extends Component {
 
         this.state = {
             data: {},
-            activeIndex: -1,
-            seasonInfo: {},
+            activeIndex: -1, //dont need if i use tabs and panes instead of accordions.
+            seasonInfo: {}, //merge this with the data object?
             isLoading: true,
-            seasonCount: 0,
+            seasonCount: 0, //merge this with the data, or the seasoninfo object?
+            hasSpecials: false,
             watched: {}
         }
 
@@ -33,19 +40,32 @@ class Page extends Component {
 
     componentDidMount() {
         this.searchTmdb();
-        api.getInfoFromId(this.props.match.params.id);
+        // api.getInfoFromId(this.props.match.params.id); //this is not doing anything yet. Might use redux for api calls, not quite sure yet, since that might not be needed.
     }
 
     searchTmdb() {
         //Reset the page when a new show is searched
-        let url = "https://api.themoviedb.org/3/tv/" + this.props.match.params.id;
-        let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits";
+        // let url = "https://api.themoviedb.org/3/tv/" + this.props.match.params.id;
+        // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits";
         console.log("Request...");
-
-        axios.get(query)
+        console.log(this.props.match.params.id)
+        getById(this.props.match.params.category, this.props.match.params.id)
             .then(response => {
+                // console.log(response);
                 this.setState({
-                    data: response.data,
+                    data: { //no need to store the entire response.data object if i'm not going to use all of the data.
+                        name: response.data.name, //does not work for movies, fix.
+                        credits: response.data.credits,
+                        poster_path: response.data.poster_path,
+                        in_production: response.data.in_production,
+                        genres: response.data.genres,
+                        created_by: response.data.created_by,
+                        number_of_seasons: response.data.number_of_seasons,
+                        first_air_date: response.data.first_air_date,
+                        last_air_date: response.data.last_air_date,
+                        id: response.data.id,
+                        // hasSpecials: response.data.seasons[0] === 0 ? true : false
+                    },
                     isLoading: false,
                 })
                 this.getSeasons();
@@ -66,46 +86,46 @@ class Page extends Component {
       //empty casts. Will test.
 
     getSeasons() {
-        let seasons = (this.state.data.seasons[0].season_number === 0) ? "season/0," : "";
-        let hasSpecials = (seasons === "") ? false : true;
+        let seasons = (this.state.hasSpecials) ? "season/0," : "";
         let seasonCount = (seasons === "") ? 0 : 1;
-
+        // axios.get("/api/").then(response => console.log(response));
         if(this.state.data.number_of_seasons > 20) console.log("CAN ONLY GET 20 SEASONS AT A TIME.");
 
         for(var i = 1; i <= this.state.data.number_of_seasons; i++) {
             seasons += "season/" + i + ",";
         }
         
-        let url = "https://api.themoviedb.org/3/tv/" + this.state.data.id;
-        let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=" + seasons;
+        // let url = "https://api.themoviedb.org/3/tv/" + this.state.data.id;
+        // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=" + seasons;
         console.log("Request...");
-
-        axios.get(query)
+        // console.log(seasons);
+        getSeasons(this.props.match.params.id, seasons)
             .then(response => {
+                console.log(response)
                 let data = {};
                 seasonCount += response.data.number_of_seasons;
                 console.log("season count:" + seasonCount);
                 // console.log("Season Count: " + seasonCount)
                 // console.log(response.data);
-                let tempEp = hasSpecials ? seasonCount - 1: seasonCount;
-                for(var i = hasSpecials ? 0 : 1; i <= tempEp; i++) {;
-                    let curSeasonNum = (hasSpecials) ? i : i;
-                    console.log(curSeasonNum + ":");
-                    console.log(response.data['season/' + curSeasonNum]);
+                let tempEp = this.state.hasSpecials ? seasonCount - 1: seasonCount;
+                for(var i = this.state.hasSpecials ? 0 : 1; i <= tempEp; i++) {;
+                    let curSeasonNum = (this.state.hasSpecials) ? i : i;
+                    // console.log(curSeasonNum + ":");
+                    // console.log(response.data['season/' + curSeasonNum]);
                     data[i] = (response.data['season/' + curSeasonNum]);
                     let seasonInfo = {}
-                    console.log(curSeasonNum);
+                    // console.log(curSeasonNum);
                     if(response.data['season/' + curSeasonNum].episodes) {
 
-                        console.log(response.data['season/' + curSeasonNum].episodes)
-                        for(var j = 1; j <= response.data['season/' + curSeasonNum].episodes.length; j++) {
-                            seasonInfo[j] = false
-                        }
+                        // console.log(response.data['season/' + curSeasonNum].episodes)
+                        // for(var j = 1; j <= response.data['season/' + curSeasonNum].episodes.length; j++) {
+                        //     seasonInfo[j] = false //inefficient to initalize the watched status of every episode by default.
+                        // }
                         
                         this.setState({
                             watched: {
                                 ...this.state.watched,
-                                [curSeasonNum]: seasonInfo
+                                [curSeasonNum]: {}
                             }
                         });
                     }
@@ -143,9 +163,11 @@ class Page extends Component {
     }
 
     saveInfo() {
-        api.saveInfo();
+        // api.saveInfo();
     }
 
+    //currently all episodes get initialized as false, which I am pretty sure causes performance issues, especially with tv shows that has a lot of episodes,
+    //such as 24 and one piece. Maybe I should instead not initialize them at all?
     toggleChecked(seasonNum, episodeNum) {
         this.setState({
             watched: {
@@ -159,22 +181,35 @@ class Page extends Component {
         console.log(seasonNum + " " + episodeNum);
     }
 
-    toggleSeason(e, seasonNum) {
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
+    //indeterminate?
+    toggleSeason(e, seasonNum) { // fix binding to checkbox
         e.stopPropagation();
-        console.log(e);
         e.preventDefault(); //not needed?
-        if(this == e.target) return
-        console.log("toggle");
+        console.log(e.type)
+        if(e.type !== 'click' && e.type !== 'mouseup') return;
+        console.log(e.type);
         let data = this.state.watched[seasonNum];
-        let status = false;
+        let status = true;
+        //fix a better solution for this: (running the same loop twice);
         Object.keys(data).map(key => {
-            if(this.state.watched[seasonNum][key] == false) status = true;
+            if(this.state.watched[seasonNum][key] != false) status = false;
         });
+
         // console.log("season number tog: " + seasonNum);
-        Object.keys(data).map(key => {
-            // console.log("key: " + key);
-            this.state.watched[seasonNum][key] = status; // use this.setstate();
-        });
+        for(var i = 1; i <= this.state.seasonInfo[seasonNum].episodes.length; i++) {
+            data[i] = status;
+        }
+        
+        console.log(seasonNum);
+        console.log(this.state.watched);
+
+        this.setState({
+            watched: {
+                ...this.state.watched,
+                data
+            }
+        })
         // console.log("toggle entire season: " + seasonNum);
     }
 
@@ -192,7 +227,7 @@ class Page extends Component {
         let genres = this.state.data.genres === null ? null : this.state.data.genres.map((genre) => 
             <Label>{genre.name}</Label>
         )
-
+        
         let cast = this.state.data.credits === null ? null : this.state.data.credits.cast.map((actor) => 
             <Card style={{width: 180}} centered>
                 <Image src={actor.profile_path === null ? Avatar : "http://image.tmdb.org/t/p/w200" + actor.profile_path} style={{height: 250}} />
@@ -216,34 +251,19 @@ class Page extends Component {
             )
         }
 
-        let seasons = this.state.data.number_of_seasons === null || //use tabs instead of accordion? (have issues with the onclick/onchange events),
-                      this.state.data.number_of_seasons === 0 ? null : //and tabs might look nicer than accordions. will test.
-                      _.isEmpty(this.state.seasonInfo) ?
-                      [...Array(this.state.seasonCount).keys()].map((seasonNum) => // dont need, wont be showing until there is season info., so fix above.
-                        <div>
-                            <Accordion.Title >
-                                <Icon name='dropdown' />
-                                Season {this.stateseasonNum}
-                            </Accordion.Title>
-                            <Accordion.Content/>
-                        </div>
-                    ) : Object.keys(this.state.seasonInfo).map((seasonNum) =>
-                        <div>
-                            <Accordion.Title active={this.state.activeIndex === seasonNum + 2} index={seasonNum + 2} onClick={this.handleClick}>
-                                <Icon name='dropdown' />
+        let panes = this.state.data.number_of_seasons === null || //use tabs instead of accordion? (have issues with the onclick/onchange events),
+                      this.state.data.number_of_seasons === 0 ? null : Object.keys(this.state.seasonInfo).map((seasonNum) => {
+                      const seasonTab = 
+                        <Tab.Pane>
+                            <Item.Group divided>
                                 {/* {console.log(this.state.seasonInfo)} */}
-                                {this.state.seasonInfo[seasonNum].name}
-                                {/* stoppropagation does not work with the onchange handler. onclick gets fired twice*/}<Checkbox style={{float: 'right'}}  onClick={e => e.stopPropagation()} onChange={(e) => {this.toggleSeason(e, seasonNum)}}/> 
-                            </Accordion.Title>
-                            <Accordion.Content active={this.state.activeIndex === seasonNum + 2}>
-                                <Item.Group divided>
-                                    {/* {console.log(this.state.seasonInfo)} */}
-                                    {this.state.seasonInfo[seasonNum].episodes.map((episode) => (
+                                {this.state.seasonInfo[seasonNum].episodes.map((episode) => (
                                     <Item>
                                         <Item.Content>
                                             <Item.Header style={{width: '100%'}}>
                                                 Episode {episode.episode_number}: {episode.name} 
-                                                <Checkbox style={{float: 'right'}} onChange={() => this.toggleChecked(seasonNum, episode.episode_number)} checked={this.state.watched[seasonNum][episode.episode_number]}/>
+                                                <Checkbox key={episode.name} style={{float: 'right' /* dont use float */}} onChange={() => this.toggleChecked(seasonNum, episode.episode_number)} checked={this.state.watched[seasonNum][episode.episode_number]}/>
+                                                {/* Fix binding to the checkbox above */}
                                             </Item.Header>
                                             <Item.Meta>
                                             <Icon name='star' color='yellow' />
@@ -256,8 +276,18 @@ class Page extends Component {
                                     </Item>
                                 ))}
                                 </Item.Group>
-                            </Accordion.Content>
-                        </div>
+                        </Tab.Pane>
+
+                        const menuItem =
+                                <Menu.Item>
+                                    {this.state.seasonInfo[seasonNum].name}
+                                    {/* Fix it so that the checkbox gets checked when each individual episode's box gets checked */}
+                                    {/* bind so checkbox can either be checked, unchecked or indeterminate */}
+                                    <Checkbox key={this.state.seasonInfo[seasonNum].name} style={{float: 'right'}} onClick={(e) => {this.toggleSeason(e, seasonNum)}} />
+                                </Menu.Item>
+
+                        return  { menuItem: menuItem, render: () => seasonTab }
+                      }
                     );
 
         return (
@@ -307,10 +337,7 @@ class Page extends Component {
                     </Item.Content>
                 </Item>
                 {/* <button onClick={this.saveInfo}>Save</button> */}
-                    <Accordion styled style={{width: '100%'}}>
-                        {seasons}
-                    </Accordion>
-
+                    <Tab menu={{ fluid: true, tabular: true, vertical: true, pointing: true, className: 'wrapper' }} panes={panes} />
                 </Item.Group>
             </Container>
         );
