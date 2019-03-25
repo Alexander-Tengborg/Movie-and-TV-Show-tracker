@@ -70,7 +70,7 @@ class List extends Component {
         let category = this.state.tvActive ? 'tv' : 'movie';
         if(data != null && data.results.length > 0) {
             console.log(data);
-            list = data.results.slice(0,14).map((data) =>
+            list = data.results.slice(0,12).map((data) =>
                 <Item category={category} key={data.id} data={data} />
             );
         }
@@ -78,13 +78,13 @@ class List extends Component {
         return (
             <div>
                 <Segment basic>
-                    <Header as='h2' style={{display: 'inline'}}>{this.props.title}</Header>
-                    <Header as='h4' style={{display: 'inline', marginLeft: '30px', float: 'right'}}>    
+                    <Header as='h2' style={{float: 'left', display: 'inline'}}>{this.props.title}</Header>
+                    <div style={{float: 'right'}}>
                         <Button attached='left' compact primary={this.state.tvActive} secondary={!this.state.tvActive} onClick={() => this.changeCategory('tv')}>Tv</Button>
                         <Button attached='right' compact primary={this.state.movieActive} secondary={!this.state.movieActive} onClick={() => this.changeCategory('movie')}>Movie</Button>
-                    </Header>
+                    </div>
                 </Segment>
-                <Card.Group itemsPerRow={7} centered>
+                <Card.Group itemsPerRow={6} centered style={{clear: 'both'}}>
                     {list}
                 </Card.Group>
             </div>
