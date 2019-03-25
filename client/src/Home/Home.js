@@ -12,7 +12,7 @@ class Home extends Component {
 
     render() {
         return (
-            <Container>
+            <Container> {/* fluid?? */}
                 <div>
                     <List title='Top Rated'/>
                     {/* <h1>Top Rated<Label>Last updated 2h ago</Label><Icon name='refresh' inverted loading circular size='tiny'/></h1> */}

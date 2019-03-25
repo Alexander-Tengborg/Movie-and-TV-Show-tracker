@@ -25,7 +25,7 @@ class Item extends Component {
             description += "...";
         }
         return (
-            <Card color='red' style={{minWidth: 100, maxWidth: 300}}>
+            <Card color='red' style={{minWidth: 120, maxWidth: 200}}>
                 <Image src={imgSrc} style={{height: 220}} />
                 <Card.Content>
                     <Card.Header>

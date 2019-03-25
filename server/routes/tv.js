@@ -12,10 +12,10 @@ tvRouter.get('/search', (req, res) => {
 });
 
 tvRouter.get('/getById', (req, res) => {
-    let url = `https://api.themoviedb.org/3/${req.query.id}?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits`;
+    let url = `https://api.themoviedb.org/3/tv/${req.query.id}?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits`;
     axios.get(url)
         .then((response) => {
-            // console.log(req.query);
+            console.log(req.query);
             return res.json(response.data);
         })
 });
