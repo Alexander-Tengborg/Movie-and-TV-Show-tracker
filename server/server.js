@@ -18,6 +18,11 @@ app.use(passport.initialize());
 
 //HTML CHARS?
 //SQL INJECTION
+
+//The website keeps running normally if mongoose fails to connect to the database.
+//So, the client does not recieve any errors or any other response, 
+//meaning that they can keep pressing a button a lot of times without anything happening / any response
+
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
     () => {
         console.log('Connected to the database.');

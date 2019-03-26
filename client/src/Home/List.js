@@ -3,7 +3,7 @@ import './List.css'
 
 import Item from './Item.js';
 
-import { Card, Checkbox, Header, Segment, Button } from 'semantic-ui-react';
+import { Card, Checkbox, Header, Segment, Button, Dropdown } from 'semantic-ui-react';
 
 import axios from 'axios';
 
@@ -75,10 +75,28 @@ class List extends Component {
             );
         }
         
+        let options = [
+            {
+                key: 'Top Rated',
+                text: 'Top Rated',
+                value: 'Top Rated'
+            },
+            {
+                key: 'Popular',
+                text: 'Popular',
+                value: 'Popular'
+            },
+            {
+                key: 'Upcoming',
+                text: 'Upcoming',
+                value: 'Upcoming'
+            }
+        ]
+
         return (
             <div>
                 <Segment basic>
-                    <Header as='h2' style={{float: 'left', display: 'inline'}}>{this.props.title}</Header>
+                    <Dropdown options={options} style={{float: 'left', display: 'inline', fontSize: '20px'}} defaultValue={options[0].value} button></Dropdown>
                     <div style={{float: 'right'}}>
                         <Button attached='left' compact primary={this.state.tvActive} secondary={!this.state.tvActive} onClick={() => this.changeCategory('tv')}>Tv</Button>
                         <Button attached='right' compact primary={this.state.movieActive} secondary={!this.state.movieActive} onClick={() => this.changeCategory('movie')}>Movie</Button>
