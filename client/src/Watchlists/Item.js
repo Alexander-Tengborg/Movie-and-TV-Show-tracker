@@ -14,14 +14,6 @@ class Item extends Component {
         let imgSrc = this.props.data.posterPath == null ? null : "http://image.tmdb.org/t/p/w300" + this.props.data.posterPath;
         let title = this.props.data.name;
         let release = "Released: " + this.props.data.releaseDate; //Aired: for tv?
-        let overview = this.props.data.overview;
-        if(overview.length > 200) { 
-            overview = overview.substring(0, 200);
-            if(overview.slice(-1) == " ") {
-                overview = overview.substring(0, overview.length - 1); //Fix, the lengths of each description can get really varied
-            }
-            overview += "...";
-        }
 
         return (
             <Card color='red' style={{minWidth: 200, maxWidth: 250}}>

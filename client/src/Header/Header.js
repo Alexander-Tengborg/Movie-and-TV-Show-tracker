@@ -71,7 +71,7 @@ class Header extends Component {
           <Container>
             <Menu.Item>
               {/*<Image size="small" src="https://www.robinwieruch.de/img/page/logo.svg" />*/}
-              <SHeader as="h2"><Link to="/">------------.net</Link></SHeader> {/* FIX SHEADER! */}
+              <SHeader as="h2"><Link to="/">FilmerTvOchAnnatHäftigt.lol</Link></SHeader> {/* FIX SHEADER! */}
             </Menu.Item>
             <Menu.Menu position="right">
               <Menu.Item>
@@ -107,7 +107,7 @@ class Header extends Component {
                     {/* <Dropdown.Header>User options</Dropdown.Header> */}
                     <Dropdown.Item text='Profile' disabled />
                     <Dropdown.Item text='Settings' disabled />
-                    <Dropdown.Item text='Watchlists' />
+                    <Dropdown.Item text='Watchlists' onClick={() => this.props.history.push('/watchlists')}/>
                     <Dropdown.Divider />
                     <Dropdown.Item text='Logout' onClick={() => this.props.logoutUser(this.props.history)}/>
                   </Dropdown.Menu>

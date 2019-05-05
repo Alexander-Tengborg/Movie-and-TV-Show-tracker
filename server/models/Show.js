@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 var showSchema = new mongoose.Schema({
-    showId: {
+    id: {
         type: Number,
         required: true,
         unique: true
     },
-    showName: {
+    name: {
         type: String,
         required: true,
     },
@@ -14,3 +14,6 @@ var showSchema = new mongoose.Schema({
 });
 
 var Show = new mongoose.model('Show', showSchema);
+
+
+module.exports = Show;

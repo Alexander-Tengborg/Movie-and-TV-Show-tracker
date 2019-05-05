@@ -23,7 +23,8 @@ var userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    shows: [{ type: mongoose.Schema.Types.Object, ref: 'Show' }]
+    shows: [{ type: mongoose.Schema.Types.Object, ref: 'Show' }],
+    watchlists: [{ type: mongoose.Schema.Types.Object, ref: 'Watchlist'}]
 });
 
 var User = new mongoose.model('User', userSchema);

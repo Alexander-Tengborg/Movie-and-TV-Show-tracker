@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import axios from 'axios';
-import { Container, Image, Loader, Item, Label, Card, Accordion, Icon, Checkbox, Tab, Menu } from 'semantic-ui-react';
+import { Container, Image, Loader, Item, Label, Card, Accordion, Icon, Checkbox, Tab, Menu, Button, Header, Modal, List } from 'semantic-ui-react';
 
 import _ from 'lodash';
 
@@ -30,20 +30,64 @@ class Page extends Component {
             isLoading: true,
             seasonCount: 0, //merge this with the data, or the seasoninfo object?
             hasSpecials: false,
-            watched: {}
+            seasonsLoading: true,
+            watched: {},
+            modalIsOpen: false,
+            watchlistData: [],
+            listsWithItem: [],
+            modalLoading: false
         }
 
-        this.searchTmdb = this.searchTmdb.bind(this);
+        this.searchMovie = this.searchMovie.bind(this);
+        this.searchTv = this.searchTv.bind(this);
         this.getSeasons = this.getSeasons.bind(this);
         this.toggleChecked = this.toggleChecked.bind(this);
+        this.getWatchlists = this.getWatchlists.bind(this);
+        this.onModalOpen = this.onModalOpen.bind(this);
+        this.onModalClose = this.onModalClose.bind(this);
+        this.addToWatchlist = this.addToWatchlist.bind(this);
+        this.removeFromWatchlist = this.removeFromWatchlist.bind(this);
     }
 
     componentDidMount() {
-        this.searchTmdb();
+        if(this.props.match.params.category == 'tv') {
+            this.searchTv();
+        } else if(this.props.match.params.category == 'movie') {
+            this.searchMovie();
+        }
         // api.getInfoFromId(this.props.match.params.id); //this is not doing anything yet. Might use redux for api calls, not quite sure yet, since that might not be needed.
     }
 
-    searchTmdb() {
+    searchMovie() {
+        //Reset the page when a new show is searched
+        // let url = "https://api.themoviedb.org/3/tv/" + this.props.match.params.id;
+        // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits";
+        console.log("Request...");
+        console.log(this.props.match.params.id)
+        getById(this.props.match.params.category, this.props.match.params.id)
+            .then(response => {
+                console.log(response.data)
+                // console.log(response);
+                this.setState({
+                    data: { //no need to store the entire response.data object if i'm not going to use all of the data.
+                        id: response.data.id,
+                        name: response.data.title, //does not work for movies, fix.
+                        credits: response.data.credits,
+                        poster_path: response.data.poster_path,
+                        in_production: response.data.in_production,
+                        genres: response.data.genres,
+                        overview: response.data.overview,
+                        created_by: response.data.created_by,
+                        number_of_seasons: response.data.number_of_seasons,
+                        releaseDate: response.data.release_date,
+                    },
+                    isLoading: false,
+                })
+            }
+        );
+    }
+
+    searchTv() {
         //Reset the page when a new show is searched
         // let url = "https://api.themoviedb.org/3/tv/" + this.props.match.params.id;
         // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits";
@@ -54,16 +98,17 @@ class Page extends Component {
                 // console.log(response);
                 this.setState({
                     data: { //no need to store the entire response.data object if i'm not going to use all of the data.
+                        id: response.data.id,
                         name: response.data.name, //does not work for movies, fix.
                         credits: response.data.credits,
                         poster_path: response.data.poster_path,
                         in_production: response.data.in_production,
+                        overview: response.data.overview,
                         genres: response.data.genres,
                         created_by: response.data.created_by,
                         number_of_seasons: response.data.number_of_seasons,
-                        first_air_date: response.data.first_air_date,
+                        releaseDate: response.data.first_air_date,
                         last_air_date: response.data.last_air_date,
-                        id: response.data.id,
                         // hasSpecials: response.data.seasons[0] === 0 ? true : false
                     },
                     isLoading: false,
@@ -126,7 +171,8 @@ class Page extends Component {
                             watched: {
                                 ...this.state.watched,
                                 [curSeasonNum]: {}
-                            }
+                            },
+                            seasonsLoading: false
                         });
                     }
                 }
@@ -213,6 +259,118 @@ class Page extends Component {
         // console.log("toggle entire season: " + seasonNum);
     }
 
+    getWatchlists() {
+        axios.get('/api/watchlist/all')
+            .then((response) => {
+                this.setState({
+                    watchlistData: response.data
+                })
+                this.getWatchlistsWithItem(response.data)
+            })
+    }
+
+    getWatchlistsWithItem(watchlistData) {
+        let watchlistIds = watchlistData.map((watchlist) => {
+            return watchlist._id
+        })
+
+        let params = {
+            id: this.state.data.id,
+            category: this.props.match.params.category,
+            watchlistIds
+        }
+
+        axios.post('/api/watchlist/getItems/', params)
+            .then((response) => {
+                let data = [];
+                if(response.data.length > 0) {
+                    data = response.data.map((result) => {
+                        return result.watchlistId;
+                    })
+                }
+
+                this.setState({
+                    listsWithItem: data,
+                    modalLoading: false
+                })
+            })
+    }
+
+    onModalOpen() {
+        this.getWatchlists()
+        this.setState({
+            modalIsOpen: true,
+            modalLoading: true
+        })
+    }
+
+    onModalClose() {
+        this.setState({
+            modalIsOpen: false
+        })
+    }
+
+    addToWatchlist(event, watchlistId) {
+
+        let target = event.target;
+
+        target.disabled = true
+
+        let data = this.state.data;
+        let params = {
+            id: data.id,
+            category: this.props.match.params.category,
+            name: data.name,
+            posterPath: data.poster_path,
+            releaseDate: data.releaseDate,
+            overview: data.overview,
+            watchlistId
+        }
+
+        axios.post('/api/watchlist/addItem/', params)
+        .then((response) => {
+            if(response.data.response) {
+                target.disabled = false; //do i need to do this??
+                this.setState({
+                    listsWithItem: [
+                        ...this.state.listsWithItem,
+                        watchlistId
+                    ]
+                })
+            }
+        })
+    }
+
+    removeFromWatchlist(event, watchlistId) {
+
+        let target = event.target;
+
+        target.disabled = true
+
+        let data = this.state.data;
+        let params = {
+            id: data.id,
+            category: this.props.match.params.category,
+            watchlistId
+        }
+
+        axios.post('/api/watchlist/removeItem/', params)
+        .then((response) => {
+            if(response.data.response) {
+                target.disabled = false; //do i need to do this??
+
+                let index = this.state.listsWithItem.indexOf(watchlistId)
+
+                let arr = this.state.listsWithItem;
+                arr.splice(index, 1)
+
+                this.setState({
+                    listsWithItem: arr
+                })
+            }
+        })
+    }
+
     //HIDE CREW/CAST IF EMPTY!!!!
     //DONT RENDER ANYTHING UNTIL PAGE HAS LOADED (EX, PRODUCTION SHOWS UP AS NOT IN PRODUCTION WHILE LOADING)
     //AND ADD LOADING SPINNY THING WHILE LOADING DATA
@@ -225,11 +383,11 @@ class Page extends Component {
         let imgSrc = this.state.data.poster_path === null ? null : "http://image.tmdb.org/t/p/w300" + this.state.data.poster_path;
         let production = this.state.data.in_production === true ? <Label color='green'>In Production</Label> : <Label color='red'>Not In Production</Label>
         let genres = this.state.data.genres === null ? null : this.state.data.genres.map((genre) => 
-            <Label>{genre.name}</Label>
+            <Label key={genre.name}>{genre.name}</Label>
         )
         
         let cast = this.state.data.credits === null ? null : this.state.data.credits.cast.map((actor) => 
-            <Card style={{width: 180}} centered>
+            <Card key={actor.id} style={{width: 180}} centered>
                 <Image src={actor.profile_path === null ? Avatar : "http://image.tmdb.org/t/p/w200" + actor.profile_path} style={{height: 250}} />
                 <Card.Content>
                     <Card.Header>{actor.name}</Card.Header>
@@ -239,9 +397,10 @@ class Page extends Component {
         )
 
         let crew = null;
-        if(this.state.data.created_by != null && this.state.data.credits != null) {
-            crew = this.state.data.created_by.concat(this.state.data.credits.crew).map((crew) => 
-            <Card style={{width: 180}} centered> 
+        let created_by = (this.state.data.created_by == null) ? [] : this.state.data.created_by;
+        if(this.state.data.credits != null) {
+            crew = this.state.data.credits.crew.concat(created_by).map((crew, i) => 
+            <Card key={crew.credit_id} style={{width: 180}} centered> 
                 <Image src={crew.profile_path === null ? Avatar : "http://image.tmdb.org/t/p/w200" + crew.profile_path} style={{height: 250}} />
                 <Card.Content>
                     <Card.Header>{crew.name}</Card.Header>
@@ -250,7 +409,6 @@ class Page extends Component {
             </Card>
             )
         }
-
         let panes = this.state.data.number_of_seasons === null || //use tabs instead of accordion? (have issues with the onclick/onchange events),
                       this.state.data.number_of_seasons === 0 ? null : Object.keys(this.state.seasonInfo).map((seasonNum) => {
                       const seasonTab = 
@@ -258,7 +416,7 @@ class Page extends Component {
                             <Item.Group divided>
                                 {/* {console.log(this.state.seasonInfo)} */}
                                 {this.state.seasonInfo[seasonNum].episodes.map((episode) => (
-                                    <Item>
+                                    <Item key={seasonNum + episode.name}>
                                         <Item.Content>
                                             <Item.Header style={{width: '100%'}}>
                                                 Episode {episode.episode_number}: {episode.name} 
@@ -279,16 +437,44 @@ class Page extends Component {
                         </Tab.Pane>
 
                         const menuItem =
-                                <Menu.Item>
+                                <Menu.Item key={this.state.seasonInfo[seasonNum].name}>
                                     {this.state.seasonInfo[seasonNum].name}
                                     {/* Fix it so that the checkbox gets checked when each individual episode's box gets checked */}
                                     {/* bind so checkbox can either be checked, unchecked or indeterminate */}
-                                    <Checkbox key={this.state.seasonInfo[seasonNum].name} style={{float: 'right'}} onClick={(e) => {this.toggleSeason(e, seasonNum)}} />
+                                    <Checkbox /*key={this.state.seasonInfo[seasonNum].name}*/ style={{float: 'right'}} onClick={(e) => {this.toggleSeason(e, seasonNum)}} />
                                 </Menu.Item>
 
                         return  { menuItem: menuItem, render: () => seasonTab }
                       }
                     );
+
+        let modal = <Modal centered={false} open={this.state.modalIsOpen} onClose={this.onModalClose} trigger={<Button onClick={this.onModalOpen}>Add to watchlist</Button>}>
+                        <Modal.Header>Add {this.state.data.name} to a watchlist</Modal.Header>
+                        <Modal.Content>
+                            <Modal.Description>
+                                {this.state.modalLoading && <Loader className='workaround' active size='medium'></Loader>}
+                                <List divided relaxed>
+                                    {!this.state.modalLoading && !_.isEmpty(this.state.watchlistData) && this.state.watchlistData.map((watchlist, i) => {
+                                        return  <List.Item key={watchlist._id}>
+                                                    <List.Content  floated='right'>
+                                                    {/* {console.log(watchlist._id + ' ' + this.state.listsWithItem.includes(watchlist._id))} */}
+                                                        { !this.state.listsWithItem.includes(watchlist._id) && <List.Header><Button color='green' onClick={(e) => this.addToWatchlist(e, watchlist._id)}>Add</Button></List.Header>}
+                                                        { this.state.listsWithItem.includes(watchlist._id) && <List.Header><Button color='red' onClick={(e) => this.removeFromWatchlist(e, watchlist._id)}>Remove</Button></List.Header>}
+                                                    </List.Content>
+                                                    <List.Content>
+                                                        <List.Header><h2>{watchlist.name}</h2></List.Header>
+                                                    </List.Content>
+                                                </List.Item>
+                                    })}
+                                </List>
+                            </Modal.Description>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button onClick={this.onModalClose} primary>
+                                Done <Icon name='right chevron' />
+                            </Button>
+                        </Modal.Actions>
+                    </Modal>
 
         return (
             <Container>
@@ -298,19 +484,23 @@ class Page extends Component {
                     <Item.Content>
                         <Item.Header>
                             {/* check square          green*/}
-                            <h1><Icon name='plus square outline' color='black' size='large' />{this.state.data.name}</h1>
+                            <h1>{this.state.data.name}</h1>
+                            {modal}
                             <Item.Meta>
                             {production}
+                            
                             </Item.Meta>
                         </Item.Header>
                         <Item.Meta>
-                        Air Date: {this.state.data.first_air_date} - Last Air Date: {this.state.data.last_air_date}
+                            {this.props.match.params.category == 'tv' &&  'Air Date: ' + this.state.data.releaseDate + ' - Last Air Date: ' + this.state.data.last_air_date}
+                            {this.props.match.params.category == 'movie' &&  'Release Date: ' + this.state.data.releaseDate}
+                            <br />
+                            {genres}
                         </Item.Meta>
                         <Item.Description>
-                            <p style={{fontSize: 15}}>{this.state.data.overview}</p>
+                            {this.state.data.overview}
                         </Item.Description>
                         <Item.Extra>
-                            {genres}
                             <Accordion styled>
                             <div>
                                 <Accordion.Title active={this.state.activeIndex === 0} index={0} onClick={this.handleClick}>
@@ -323,7 +513,7 @@ class Page extends Component {
                                     </Card.Group>
                                 </Accordion.Content>
                                 </div>
-                                <Accordion.Title active={this.state.activeIndex === 1} index={1} onClick={this.handleClick}>
+                                {this.state.data.credits.crew && <div><Accordion.Title active={this.state.activeIndex === 1} index={1} onClick={this.handleClick}>
                                     <Icon name='dropdown' />
                                     Crew
                                 </Accordion.Title>
@@ -331,13 +521,13 @@ class Page extends Component {
                                     <Card.Group>
                                         {crew}
                                     </Card.Group>
-                                </Accordion.Content>
+                                </Accordion.Content></div>}
                             </Accordion>
                         </Item.Extra>
                     </Item.Content>
                 </Item>
                 {/* <button onClick={this.saveInfo}>Save</button> */}
-                    <Tab menu={{ fluid: true, tabular: true, vertical: true, pointing: true, className: 'wrapper' }} panes={panes} />
+                    {(this.props.match.params.category == 'tv' && !this.props.seasonsLoading) && <Tab menu={{ fluid: true, tabular: true, vertical: true, pointing: true, className: 'wrapper' }} panes={panes} />}
                 </Item.Group>
             </Container>
         );

@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 var episodeSchema = new mongoose.Schema({
-    episodeId: {
+    id: {
         type: Number,
         required: true,
         unique: true
     },
-    episodeName: {
+    name: {
         type: String,
         required: true
     },
@@ -17,3 +17,6 @@ var episodeSchema = new mongoose.Schema({
 });
 
 var Episode = new mongoose.model('Episode', episodeSchema);
+
+
+module.exports = Episode;

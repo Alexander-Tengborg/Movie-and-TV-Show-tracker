@@ -2,14 +2,10 @@ const mongoose = require('mongoose');
 
 //FIX THE NAMES!
 //Some have featured in them, while others dont.
-var featuredSchema = new mongoose.Schema({
+var itemSchema = new mongoose.Schema({
     id: {
         type: Number,
         required: true,
-    },
-    type: {
-        type: String, //int instead? 
-        required: true
     },
     category: {
         type: String, //int instead? ex, 0 being tv, and 1 being movie.
@@ -27,9 +23,10 @@ var featuredSchema = new mongoose.Schema({
     },
     overview: {
         type: String
-    }
-}, { collection: 'featured' });
+    },
+    watchlistId: { type: mongoose.Schema.Types.ObjectId, ref: 'Watchlist'},
+});
 
-var Featured = new mongoose.model('Featured', featuredSchema);
+var Item = new mongoose.model('Item', itemSchema);
 
-module.exports = Featured;
+module.exports = Item;

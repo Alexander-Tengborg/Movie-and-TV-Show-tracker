@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 var seasonSchema = new mongoose.Schema({
-    seasonId: {
+    id: {
         type: Number,
         required: true,
         unique: true
     },
-    seasonName: {
+    name: {
         type: String,
         required: true
     },
@@ -15,3 +15,6 @@ var seasonSchema = new mongoose.Schema({
 });
 
 var Season = new mongoose.model('Season', seasonSchema);
+
+
+module.exports = Season;

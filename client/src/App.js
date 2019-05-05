@@ -7,6 +7,7 @@ import Header from './Header/Header';
 import Page from './Page/Page';
 import Home from './Home/Home';
 import Search from './Search/Search';
+import Watchlists from './Watchlists/Watchlists';
 import Footer from './Footer/Footer';
 
 import NotFound from './NotFound';
@@ -45,19 +46,20 @@ class App extends Component {
           <Header/>
           <Container fluid={true}>
               <Switch>
-                <SecureRoute exact path="/" component={Home} />
+                <SecureRoute exact path='/' component={Home} />
 
 {/* The current routing goes /s/category/query/page. Example: /s/tv/sherlock/1 Not sure if i want to use this. might use something such as /search?c=tv&q=sherlock&page=1, or  /search/tv/?q=sherlock&page=1, or /tv/search/?q=sherlock&page=1*/}
 
-                {/* <SecureRoute exact path="/s/:category/:query/:page" component={Search} />  */}
-                {/* <SecureRoute exact path="/search/:category/:query/:page" component={Search} />  */}
-                <SecureRoute exact path="/:category/search" component={Search} /> 
-                <SecureRoute exact path="/:category/:id" component={Page} />
+                {/* <SecureRoute exact path='/s/:category/:query/:page' component={Search} />  */}
+                {/* <SecureRoute exact path='/search/:category/:query/:page' component={Search} />  */}
+                <SecureRoute exact path='/:category/search' component={Search} /> 
+                <SecureRoute exact path='/:category/:id' component={Page} />
+      
+                <SecureRoute exact path='/watchlists' component={Watchlists} />
+                {/* <Route exact path='/register' /> Don't know if I'll use this. */}
+                <Route exact path='/login' component={Login} />
 
-                {/* <Route exact path="/register" /> Don't know if I'll use this. */}
-                <Route exact path="/login" component={Login} />
-
-                <SecureRoute exact path="*" component={NotFound} />
+                <SecureRoute exact path='*' component={NotFound} />
               </Switch>
           </Container>
           <Footer />
