@@ -23,6 +23,7 @@ class Watchlists extends Component {
         this.getWatchlist = this.getWatchlist.bind(this);
         this.onChange = this.onChange.bind(this);
         this.onAddItem = this.onAddItem.bind(this);
+        this.deleteList = this.deleteList.bind(this);
     }
 
     componentDidMount() {
@@ -65,16 +66,35 @@ class Watchlists extends Component {
                 watchlists: data
             })
         });
+    }
 
+    deleteList(e, id, i) {
+        e.stopPropagation();
+        axios.get(`/api/watchlist/remove/${id}`)
+        .then((response) => {
+            console.log(response.data)
+            if(response.data.response == 'Success!') {
+                let data = this.state.watchlists;
+                data.splice(i, 1);
+                this.setState({
+                    watchlists: data
+                })
+            }
+            // this.setState({
+            //     isLoading: false,
+            //     watchlists: data
+            // })
+        });
     }
 
     render() {
 
-        let options = this.state.watchlists.map((watchlist) => {
+        let options = this.state.watchlists.map((watchlist, i) => {
             return {
                 value: watchlist._id,
                 text: watchlist.name,
                 name: watchlist.name,
+                content: <p>{watchlist.name} <Icon name='delete' style={{float: 'right'}} onClick={(e) => this.deleteList(e, watchlist._id, i)} /></p>
             }
         })
 

@@ -39,8 +39,8 @@ watchlistRouter.get('/create/:name', (req, res) => {
     res.json(watchlist)
 });
 
-watchlistRouter.post('/remove/', (req, res) => {
-    let id = req.body.id
+watchlistRouter.get('/remove/:id', (req, res) => {
+    let id = req.params.id
     if(isEmpty(id)) return res.json({ error: 'ID cannot be empty!'});
 
     Watchlist.deleteOne({ _id: id}, (error, result) => {
