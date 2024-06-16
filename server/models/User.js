@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 var userSchema = new mongoose.Schema({
     username: {
@@ -94,11 +95,13 @@ module.exports = User;
 // ]
 
 // var user = new User({
-//     username: 'Linda',
-//     email: 'Linda@Gmail.com',
-//     password: 'Linda1234', 
-//     shows: shows
+//     username: 'Test',
+//     email: 'Test@Gmail.com',
+//     password: bcrypt.hashSync('Test'),
+//     // shows: shows
 // });
+
+// user.save();
 
 // https://stackoverflow.com/questions/21971666/mongoose-unique-field
 // https://mlab.com/databases/tmdb-test/collections/users?_id=5c505921ea71d43cb8dfff91&pageSize=10&pageNum=0&totalCount=2&

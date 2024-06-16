@@ -16,13 +16,23 @@ watchlistRouter.get('/all', (req, res) => {
     })
 });
 
-watchlistRouter.get('/:id', (req, res) => {
+watchlistRouter.get('/:id', async (req, res) => {
     let id = req.params.id;
     if(isEmpty(id)) return res.json({ error: 'ID cannot be empty!'});
+    console.log("ID: " + id);
+    
+    let watchlist = await Watchlist.find({ _id: id });
 
-    Item.find({ watchlistId: id }).then((result) => {
-        res.json(result);
-    })
+    if(!watchlist)
+        return res.json({});
+
+    let items = await Item.find({ watchlistId: id });
+    if(!items)
+        return res.json({});
+
+    console.log(items);
+
+    return res.json(items);
 });
 
 //change this to not use params.

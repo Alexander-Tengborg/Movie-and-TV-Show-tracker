@@ -51,12 +51,14 @@ class Home extends Component {
         axios.get('/api/featured/all')
             .then((response) => {
                 let data = {};
+                console.log(data);
+
                 response.data.map((item) => {
                     if(!data[item.type]) data[item.type] = {}
                     if(!data[item.type][item.category]) data[item.type][item.category] = []
                     data[item.type][item.category].push(item);
                 })
-                // console.log(data);
+                console.log(data);
                 this.setState({
                     data: data,
                     isLoading: false

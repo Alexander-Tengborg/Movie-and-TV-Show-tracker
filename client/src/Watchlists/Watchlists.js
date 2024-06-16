@@ -48,6 +48,7 @@ class Watchlists extends Component {
     }
 
     onChange(event, data) {
+        console.log(1)
         this.setState({
             isLoading: true,
             selectedList: data.value
@@ -56,6 +57,7 @@ class Watchlists extends Component {
     }
 
     onAddItem(event, data) {
+        console.log(2)
         axios.get(`/api/watchlist/create/${data.value}`)
         .then((response) => {
             console.log(response.data)

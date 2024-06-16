@@ -1,4 +1,4 @@
 module.exports = {
-    DB: 'mongodb://admin:test123@ds261155.mlab.com:61155/turbo-octo'
+    DB: 'mongodb+srv://landavaranda:kJrRigoN9h6BYwEV@cluster0.zprenzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
     //DB: 'mongodb://localhost:27017/dbtests'
 }

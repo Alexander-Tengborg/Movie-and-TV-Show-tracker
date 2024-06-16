@@ -71,7 +71,7 @@ class Header extends Component {
           <Container>
             <Menu.Item>
               {/*<Image size="small" src="https://www.robinwieruch.de/img/page/logo.svg" />*/}
-              <SHeader as="h2"><Link to="/">FilmerTvOchAnnatHäftigt.lol</Link></SHeader> {/* FIX SHEADER! */}
+              <SHeader as="h2"><Link to="/">Movie and TV Show tracker</Link></SHeader> {/* FIX SHEADER! */}
             </Menu.Item>
             <Menu.Menu position="right">
               <Menu.Item>
