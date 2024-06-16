@@ -36,18 +36,18 @@ Some of the websites functionality:
     <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/d276061c-b4fb-4331-8d65-b7d637578834" width="75%" height="75%">
 </p>
 
-### Accessing your watchlists
+### Accessing your watchlist
 <p align="center">
-    <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/31cc94fa-c128-489c-9a3a-5767e4dd7756" width="75%" height="75%">
+    <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/2387419c-2172-4823-8444-97bae7a222a3" width="75%" height="75%">
 </p>
 
 <p align="center">
-    <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/443ad8a2-c7b8-4b86-9d78-a1d7bb2373eb" width="75%" height="75%">
+    <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/5e1fb224-d18e-41fd-9242-835a0dc0ac28" width="75%" height="75%">
 </p>
 
 ### Adding a new watchlist
 <p align="center">
-    <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/efdb9b93-413a-4b66-a135-aaf3a9fba3e2" width="75%" height="75%">
+    <img src="https://github.com/Alexander-Tengborg/turbo-octo/assets/14126933/b84c65eb-fa6f-41f8-85e4-b0282d215f12" width="75%" height="75%">
 </p>
 
 ### Show content of a watchlist
