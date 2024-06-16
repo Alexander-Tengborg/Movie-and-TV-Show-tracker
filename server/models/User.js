@@ -35,7 +35,7 @@ module.exports = User;
 // var episodes1 = [
 //     new Episode({
 //         episodeId: 4312,
-//         episodeName: 'u mum',
+//         episodeName: 'u',
 //         watched: true
 //     }),
 //     new Episode({

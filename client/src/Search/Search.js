@@ -33,16 +33,16 @@ class Search extends Component {
       return new URLSearchParams(props.location.search).get(param);
     }
   //Use the following link while getting tv show/movie details, so i also can show the actors (and possibly writers)
-  //https://api.themoviedb.org/3/tv/19885?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits
+  //https://api.themoviedb.org/3/tv/19885?api_key=TMDB_API_KEY&append_to_response=credits
 
   //Get shows that are recommendations????? (could use similar instead, but not as good...)
-  //https://api.themoviedb.org/3/tv/19885?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=recommendations
+  //https://api.themoviedb.org/3/tv/19885?api_key=TMDB_API_KEY&append_to_response=recommendations
 
   //Get reviews? meh?
-  //https://api.themoviedb.org/3/tv/19885?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=reviews
+  //https://api.themoviedb.org/3/tv/19885?api_key=TMDB_API_KEY&append_to_response=reviews
 
   //Get external IDs (mostly so that I can link to the imdb page)
-  //https://api.themoviedb.org/3/tv/19885?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=external_ids
+  //https://api.themoviedb.org/3/tv/19885?api_key=TMDB_API_KEY&append_to_response=external_ids
 
 
     //Currently it it only searching for movies when the component MOUNTS, so when it goes from one component to this component, or when the page refreshes.
@@ -69,7 +69,7 @@ class Search extends Component {
   searchTmdb() {
     //Reset the page when a new show is searched
     // let url = "https://api.themoviedb.org/3/search/" + this.props.match.params.category;
-    // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&query=" + this.getParam(this.props, 'q') + "&page=" + this.state.curPage;
+    // let query = url + "?api_key=TMDB_API_KEY&query=" + this.getParam(this.props, 'q') + "&page=" + this.state.curPage;
     console.log("Searching for: " + this.getParam(this.props, 'q'));
     this.setState({
       data: {},
@@ -95,7 +95,7 @@ class Search extends Component {
   searchTmdbPage() {
        //Reset the page when a new show is searched
       //  let url = "https://api.themoviedb.org/3/search/" + this.props.match.params.category;
-      //  let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&query=" + this.getParam(this.props, 'q') + "&page=" + this.state.curPage;
+      //  let query = url + "?api_key=TMDB_API_KEY&query=" + this.getParam(this.props, 'q') + "&page=" + this.state.curPage;
        console.log("Request...");
        this.setState({
          isSearching: true

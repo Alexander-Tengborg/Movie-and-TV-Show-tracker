@@ -61,7 +61,7 @@ class Page extends Component {
     searchMovie() {
         //Reset the page when a new show is searched
         // let url = "https://api.themoviedb.org/3/tv/" + this.props.match.params.id;
-        // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits";
+        // let query = url + "?api_key=TMDB_API_KEY&append_to_response=credits";
         console.log("Request...");
         console.log(this.props.match.params.id)
         getById(this.props.match.params.category, this.props.match.params.id)
@@ -90,7 +90,7 @@ class Page extends Component {
     searchTv() {
         //Reset the page when a new show is searched
         // let url = "https://api.themoviedb.org/3/tv/" + this.props.match.params.id;
-        // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=credits";
+        // let query = url + "?api_key=TMDB_API_KEY&append_to_response=credits";
         console.log("Request...");
         console.log(this.props.match.params.id)
         getById(this.props.match.params.category, this.props.match.params.id)
@@ -141,7 +141,7 @@ class Page extends Component {
         }
         
         // let url = "https://api.themoviedb.org/3/tv/" + this.state.data.id;
-        // let query = url + "?api_key=e7c932bbbb81168a709224970c15e1a7&append_to_response=" + seasons;
+        // let query = url + "?api_key=TMDB_API_KEY&append_to_response=" + seasons;
         console.log("Request...");
         // console.log(seasons);
         getSeasons(this.props.match.params.id, seasons)

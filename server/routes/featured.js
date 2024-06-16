@@ -24,7 +24,7 @@ featuredRouter.post('/update/:type/:category', (req, res) => {
     if(!categories.includes(category)) return res.json({ error: 'Invalid category'});
 
 
-    let url = `https://api.themoviedb.org/3/${category}/${type}?api_key=e7c932bbbb81168a709224970c15e1a7`;
+    let url = `https://api.themoviedb.org/3/${category}/${type}?api_key=TMDB_API_KEY`;
     axios.get(url)
         .then((response) => {
             if(isEmpty(response.data.results)) return res.json({ error: 'Bad response'})
